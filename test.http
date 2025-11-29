@@ -1,0 +1,12 @@
+### Login
+POST http://localhost/api/login_check
+Content-Type: application/json
+
+{
+  "username": "mao",
+  "password": "1234"
+}
+
+### Usar token
+GET http://localhost/api
+Authorization: Bearer eyJ0eXAiOiJKV1QiLCJhbGciOiJSUzI1NiJ9.eyJpYXQiOjE3NjM2MDAwNDcsImV4cCI6MTc2MzYwMzY0Nywicm9sZXMiOlsiUk9MRV9VU0VSIl0sInVzZXJuYW1lIjoibWFvIn0.WGm6L1wNP1xotV0h3QQnnEtxazGSDF0s0SE03IbIaiuwN_FvG3iP8NpTAwJ4QnztrcQwETF_K_IIWSx4ng9rnpNB46QPJtc3lPZX1-CfaY8A3prjNzsLagKJtIpYytjR0-XURAbHH3DY0V0A0qL6yMCYE-J9YHIfpt1pglnIAtgf71z0Z9Pzz_6b7qSNgf7zr3Wr_pJNr1iAndJuK9_46Ay2Y1uk9B7aXwP3bS92X_x1JKaivMcnOpDPYP-LLPl8jrC0439bhKcQ2mwcC999cWImYtmfXZAzIjhA7aaYVB-PWeAI6J2OTxY5pnRdtgFYdPU_4Kqu-hPN3RnxPSy7SA
