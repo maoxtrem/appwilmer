@@ -104,3 +104,20 @@ document
       console.error("Error:", err);
     }
   });
+
+  // Inicializar tabla con datos
+    document.addEventListener("DOMContentLoaded", () => {
+     // $('#tablaClientes').bootstrapTable({ data: datosBackend });
+    });
+
+    // Formatear fecha
+    function formatearFecha(value) {
+      const fecha = new Date(value);
+      return fecha.toLocaleString("es-CO", {
+        year: "numeric",
+        month: "2-digit",
+        day: "2-digit",
+        hour: "2-digit",
+        minute: "2-digit"
+      });
+    }

@@ -84,6 +84,32 @@
     </div>
   </div>
 
+  <div class="container mt-4">
+    <h2>Listado de Clientes</h2>
+
+    <table 
+      id="tablaClientes"
+      class="table table-sm table-striped"
+      data-url="/api/cliente"
+      data-toggle="table"
+      data-search="true"
+      data-pagination="true"
+      data-page-size="5"
+    >
+      <thead>
+        <tr>
+          <th data-field="id" data-sortable="true">ID</th>
+          <th data-field="nombre" data-sortable="true">Nombre</th>
+          <th data-field="ip">IP</th>
+          <th data-field="longitud">Longitud</th>
+          <th data-field="latitud">Latitud</th>
+          <th data-field="observacion">Observación</th>
+          <th data-field="estado">Estado</th>
+          <th data-field="fechaInstalacion" data-formatter="formatearFecha">Fecha Instalación</th>
+        </tr>
+      </thead>
+    </table>
+  </div>
   <!--#include virtual="/public/includes/js.html" -->
 
   <script src="./public/js/index.js"></script>
