@@ -4,7 +4,6 @@ namespace App\Controller;
 
 use App\Entity\User;
 use App\Repository\UserRepository;
-use Doctrine\ORM\EntityManagerInterface;
 use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
 use Symfony\Component\HttpFoundation\JsonResponse;
 use Symfony\Component\HttpFoundation\Request;
@@ -20,9 +19,9 @@ final class UserController extends AbstractController
         private readonly UserRepository $userRepository,
         private readonly UserPasswordHasherInterface $passwordHasher,
         private readonly SerializerInterface $serializer
-    ) {
-    }
+    ) {}
 
+    // 📌 Listar todos los usuarios
     #[Route('', name: 'app_user_list', methods: ['GET'])]
     public function index(): JsonResponse
     {
@@ -31,6 +30,7 @@ final class UserController extends AbstractController
         return new JsonResponse($data, Response::HTTP_OK, [], true);
     }
 
+    // 📌 Mostrar un usuario por ID
     #[Route('/{id}', name: 'app_user_show', methods: ['GET'])]
     public function show(User $user): JsonResponse
     {
@@ -38,33 +38,49 @@ final class UserController extends AbstractController
         return new JsonResponse($data, Response::HTTP_OK, [], true);
     }
 
-    #[Route('/{id}', name: 'app_user_delete', methods: ['DELETE'])]
-    public function delete(User $user): JsonResponse
-    {
-        $this->userRepository->remove($user);
-
-
-        return new JsonResponse(null, Response::HTTP_NO_CONTENT);
-    }
-
+    // 📌 Crear un nuevo usuario
     #[Route('', name: 'app_user_create', methods: ['POST'])]
     public function create(Request $request): JsonResponse
     {
         $user = $this->serializer->deserialize($request->getContent(), User::class, 'json');
-        $user->setPassword($this->passwordHasher->hashPassword($user, $user->getPassword()));
-        $this->userRepository->seve($user);
+
+        // Hash del password antes de guardar
+        if (!empty($user->getPassword())) {
+            $user->setPassword($this->passwordHasher->hashPassword($user, $user->getPassword()));
+        }
+
+        $this->userRepository->save($user);
+
         $data = $this->serializer->serialize($user, 'json', ['groups' => 'user:read']);
         return new JsonResponse($data, Response::HTTP_CREATED, [], true);
     }
 
+    // 📌 Actualizar un usuario existente
     #[Route('/{id}', name: 'app_user_update', methods: ['PUT'])]
     public function update(Request $request, User $user): JsonResponse
     {
-        $this->serializer->deserialize($request->getContent(), User::class, 'json', ['object_to_populate' => $user]);
-        if ($password = $user->getPassword()) {
-            $user->setPassword($this->passwordHasher->hashPassword($user, $password));
+        $data = json_decode($request->getContent(), true);
+
+        // Deserializar sobre el objeto existente
+        $this->serializer->deserialize($request->getContent(), User::class, 'json', [
+            'object_to_populate' => $user,
+        ]);
+
+        // Si viene password en el body, lo hashéo
+        if (!empty($data['password'])) {
+            $user->setPassword($this->passwordHasher->hashPassword($user, $data['password']));
         }
-        $this->userRepository->flush();
+
+        $this->userRepository->save($user);
+
+        return $this->json($user, Response::HTTP_OK, ['groups' => 'user:read']);
+    }
+
+    // 📌 Eliminar un usuario
+    #[Route('/{id}', name: 'app_user_delete', methods: ['DELETE'])]
+    public function delete(User $user): JsonResponse
+    {
+        $this->userRepository->remove($user);
         return new JsonResponse(null, Response::HTTP_NO_CONTENT);
     }
 }

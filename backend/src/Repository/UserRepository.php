@@ -33,7 +33,7 @@ class UserRepository extends ServiceEntityRepository implements PasswordUpgrader
         $this->getEntityManager()->flush();
     }
 
-    public function seve(User $entity, $flush = true): User
+    public function save(User $entity, $flush = true): User
     {
         $this->getEntityManager()->persist($entity);
         $flush && $this->getEntityManager()->flush();
