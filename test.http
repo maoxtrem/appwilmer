@@ -20,5 +20,5 @@ PUT http://localhost/api/user/3
 Authorization: Bearer eyJ0eXAiOiJKV1QiLCJhbGciOiJSUzI1NiJ9.eyJpYXQiOjE3NjQ2OTYwOTcsImV4cCI6MTc2NDY5OTY5Nywicm9sZXMiOlsiUk9MRV9VU0VSIl0sInVzZXJuYW1lIjoibWFvIn0.bBkkEviRExbHcF0DBMAPH5I1VgNiGwjH_jHObszl9sfvho1MLlV3OGJDVab-hgvTmNtbrvyC4oqjBdK2uTOo2OnAVx55DzTOKD4hyxj5dwv-d9hDnOEejx4uKZJq5J3oPv0NKx7QehMiWg0wjtqI33ogWZh8LaR93xSOpLXn19PjTlPnRRq3YagjiNSZIF5cXNicmnriJ9729wP_7B19DJB6zZURxS_SJ2SFrChPNK9bNR5LGx7IxeWA5yHMx6_Hih2oiPb8H1kRPB9cIzSOqcPwn3vG8KKx_LE7jCsUM6USnzepvbDCC9KaYiKHuyMzsb4jHI1u8umOXzfLQIcR6w
 
 {
-  "username": "maox"
-}
+  "username": "maox"NiJ9
+} bjhn 

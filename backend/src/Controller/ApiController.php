@@ -9,11 +9,11 @@ use Symfony\Component\HttpFoundation\Request;
 use App\Repository\UserRepository;
 
 
-#[Route('/api', name: 'app_')]
+#[Route('/api', name: 'api_')]
 final class ApiController extends AbstractController
 {
 
-    #[Route(name: 'api', methods: ['GET'])]
+    #[Route(name: '', methods: ['GET'])]
     public function index(Request $request): JsonResponse
     {
         return new JsonResponse(['status' => 'ok']);

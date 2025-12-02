@@ -14,7 +14,7 @@ use Symfony\Component\PasswordHasher\Hasher\UserPasswordHasherInterface;
 use Symfony\Component\Routing\Annotation\Route;
 use Symfony\Component\Serializer\SerializerInterface;
 
-#[Route('/api/user',name: 'app_user_')]
+#[Route('/api/user', name: 'api_user_')]
 #[OA\Tag(name: 'User')]
 final class UserController extends AbstractController
 {
@@ -34,8 +34,8 @@ final class UserController extends AbstractController
             items: new OA\Items(ref: new Model(type: User::class, groups: ['user:read']))
         )
     )]
- 
-    public function index(): JsonResponse
+
+    public function list(): JsonResponse
     {
         $users = $this->userRepository->findAll();
         $data = $this->serializer->serialize($users, 'json', ['groups' => 'user:read']);
@@ -79,14 +79,33 @@ final class UserController extends AbstractController
     )]
     public function create(Request $request): JsonResponse
     {
-        $user = $this->serializer->deserialize($request->getContent(), User::class, 'json', ['groups' => 'user:write']);
-        // Hash del password antes de guardar
-        if (!empty($user->getPassword())) {
-            $user->setPassword($this->passwordHasher->hashPassword($user, $user->getPassword()));
+        $data = json_decode($request->getContent(), true);
+
+        // ✅ Validación manual antes de serializar
+        if (empty($data['username'])) {
+            return new JsonResponse(['error' => 'Username is required'], Response::HTTP_BAD_REQUEST);
         }
+        if (empty($data['password'])) {
+            return new JsonResponse(['error' => 'Password is required'], Response::HTTP_BAD_REQUEST);
+        }
+
+        // ✅ Si pasa validación, deserializo al objeto
+        $user = $this->serializer->deserialize(
+            $request->getContent(),
+            User::class,
+            'json',
+            ['groups' => 'user:write']
+        );
+
+        // Hash del password
+        $user->setPassword(
+            $this->passwordHasher->hashPassword($user, $data['password'])
+        );
+
         $this->userRepository->save($user);
-        $data = $this->serializer->serialize($user, 'json', ['groups' => 'user:read']);
-        return new JsonResponse($data, Response::HTTP_CREATED, [], true);
+
+        $responseData = $this->serializer->serialize($user, 'json', ['groups' => 'user:read']);
+        return new JsonResponse($responseData, Response::HTTP_CREATED, [], true);
     }
 
     // 📌 Actualizar un usuario existente
@@ -123,10 +142,7 @@ final class UserController extends AbstractController
         ]);
 
         // Si viene password en el body, lo hashéo
-        if (!empty($data['password'])) {
-            $user->setPassword($this->passwordHasher->hashPassword($user, $data['password']));
-        }
-
+        !empty($data['password']) && $user->setPassword($this->passwordHasher->hashPassword($user, $data['password']));
         $this->userRepository->save($user);
 
         return $this->json($user, Response::HTTP_OK, ['groups' => 'user:read']);
