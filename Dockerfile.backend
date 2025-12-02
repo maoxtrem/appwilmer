@@ -1,26 +1,17 @@
-FROM php:8.2-apache
-
-# Evitar prompts interactivos
-ENV DEBIAN_FRONTEND=noninteractive
-
-# Instalar solo lo necesario
-RUN apt-get update && apt-get install -y \
-    libicu-dev \
-    libzip-dev \
-    unzip \
-    && docker-php-ext-install intl pdo_mysql zip \
-    && rm -rf /var/lib/apt/lists/*
-
-
-
-# Instalar Composer
-COPY --from=composer:2 /usr/bin/composer /usr/bin/composer
-
+FROM php:8.2-fpm
 
 WORKDIR /var/www/html
 
-RUN chown -R www-data:www-data /var/www/html \
-     && a2ensite 000-default.conf \
-     && a2enmod rewrite
+# Instalar dependencias del sistema necesarias para Symfony
+RUN apt-get update && apt-get install -y \
+    git unzip libicu-dev libzip-dev libpng-dev libonig-dev \
+    && docker-php-ext-install pdo pdo_mysql intl zip gd
 
-  
+# Copiar composer desde imagen oficial
+COPY --from=composer:2 /usr/bin/composer /usr/bin/composer
+
+# Permitir plugins aunque sea root
+ENV COMPOSER_ALLOW_SUPERUSER=1
+
+CMD ["php-fpm"]
+

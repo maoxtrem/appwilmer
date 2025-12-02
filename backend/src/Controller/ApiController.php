@@ -20,18 +20,4 @@ final class ApiController extends AbstractController
     }
 
 
-
-    #[Route('/usuario/listar', name: 'usuario_listar')]
-    public function test(UserRepository $userRepository): JsonResponse
-    {
-        $users = $userRepository->findAll();
-        $data = [];
-        foreach ($users as $user) {
-            $data[] = [
-                'id' => $user->getId(),
-                'username' => $user->getUsername(),
-            ];
-        }
-        return new JsonResponse($data);
-    }
 }

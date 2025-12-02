@@ -1,0 +1,11 @@
+services:
+  backend:
+    user: 1000:1000
+    build:
+      context: ./
+      dockerfile: Dockerfile.backend
+    container_name: symfony_api
+    environment:
+      APP_ENV: dev
+    volumes:
+      - ./backend:/var/www/html:rw    

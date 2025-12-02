@@ -1,0 +1,8 @@
+ 
+services: 
+  frontend:
+    build:
+      context: .
+      dockerfile: Dockerfile.frontend
+    volumes:
+      - ./frontend/dist:/usr/share/nginx/html:rw    

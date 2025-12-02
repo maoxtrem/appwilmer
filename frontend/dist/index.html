@@ -1,11 +1,149 @@
 <!DOCTYPE html>
-<html lang="en">
+<html lang="es">
 <head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Document</title>
+  <meta charset="utf-8" />
+  <title>Mapa y Formulario con Ubicación</title>
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+
+  <!-- Bootstrap CSS -->
+  <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/css/bootstrap.min.css" rel="stylesheet">
+
+  <!-- Leaflet CSS -->
+  <link rel="stylesheet" href="https://unpkg.com/leaflet/dist/leaflet.css" />
+
+  <style>
+    #map { height: 300px; width: 100%; }
+  </style>
 </head>
-<body>
-    
+<body class="bg-light">
+
+<div class="container py-5">
+  <div class="row justify-content-center">
+    <!-- Tarjeta del mapa -->
+    <div class="col-md-6">
+      <div class="card shadow">
+        <div class="card-header text-center">
+          Mapa de Piedecuesta
+        </div>
+        <div class="card-body">
+          <div id="map"></div>
+        </div>
+      </div>
+    </div>
+
+    <!-- Tarjeta del formulario -->
+    <div class="col-md-6 mt-4 mt-md-0">
+      <div class="card shadow">
+        <div class="card-header text-center">
+          Formulario
+        </div>
+        <div class="card-body">
+          <form action="/guardar" method="POST">
+            <div class="mb-3">
+              <label for="nombre" class="form-label">Nombre</label>
+              <input type="text" class="form-control" id="nombre" name="nombre" placeholder="Ingresa tu nombre">
+            </div>
+            <div class="mb-3">
+              <label for="correo" class="form-label">Correo</label>
+              <input type="email" class="form-control" id="correo" name="correo" placeholder="Ingresa tu correo">
+            </div>
+
+            <!-- Campo de ubicación con botón -->
+            <div class="mb-3">
+              <label for="ubicacion" class="form-label">Ubicación</label>
+              <div class="input-group">
+                <input type="text" class="form-control" id="ubicacion" name="ubicacion" readonly>
+                <button type="button" class="btn btn-outline-primary" onclick="getLocation()">📍 Mi ubicación</button>
+              </div>
+            </div>
+
+            <button type="submit" class="btn btn-primary w-100">Enviar</button>
+          </form>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
+
+<!-- Bootstrap JS -->
+<script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/js/bootstrap.bundle.min.js"></script>
+
+<!-- Leaflet JS -->
+<script src="https://unpkg.com/leaflet/dist/leaflet.js"></script>
+<script>
+  // Inicializa el mapa en Piedecuesta
+  const map = L.map('map').setView([6.9931457,-73.0861263], 17);
+
+  // Capa de tiles de OSM
+  L.tileLayer('https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png', {
+    maxZoom: 19,
+    attribution: '© OpenStreetMap contributors'
+  }).addTo(map);
+
+  // Ícono personalizado
+  const customIcon = L.icon({
+    iconUrl: 'https://cdn-icons-png.flaticon.com/512/684/684908.png',
+    iconSize: [16, 16],
+    iconAnchor: [8, 16],
+    popupAnchor: [0, -16]
+  });
+
+  // Marcador inicial
+  let marker = L.marker([6.9931457,-73.0861263], { icon: customIcon })
+    .addTo(map)
+    .bindPopup("Piedecuesta, Santander");
+
+  // Función para obtener ubicación actual
+  function getLocation() {
+    if (navigator.geolocation) {
+      navigator.geolocation.getCurrentPosition(showPosition, showError);
+    } else {
+      document.getElementById("ubicacion").value = "Geolocalización no soportada";
+    }
+  }
+
+  function showPosition(position) {
+    const lat = position.coords.latitude;
+    const lon = position.coords.longitude;
+
+    // Cargar en el formulario
+    document.getElementById("ubicacion").value = lat + ", " + lon;
+
+    // Mover mapa y marcador
+    map.setView([lat, lon], 17);
+    marker.setLatLng([lat, lon]).bindPopup("Tu ubicación actual").openPopup();
+  }
+
+  function showError(error) {
+    switch(error.code) {
+      case error.PERMISSION_DENIED:
+        //document.getElementById("ubicacion").value = "Permiso de ubicación denegado";
+        break;
+      case error.POSITION_UNAVAILABLE:
+        //document.getElementById("ubicacion").value = "Ubicación no disponible";
+        break;
+      case error.TIMEOUT:
+        //document.getElementById("ubicacion").value = "Tiempo de espera agotado";
+        break;
+      default:
+        //document.getElementById("ubicacion").value = "Error desconocido";
+    }
+  }
+
+  // Evento doble clic en el mapa
+map.on('dblclick', function(e) {
+  const lat = e.latlng.lat.toFixed(4); // 4 decimales
+  const lon = e.latlng.lng.toFixed(4); // 4 decimales
+
+  // Cargar coordenadas en el input
+  document.getElementById("ubicacion").value = lat + ", " + lon;
+
+  // Mover marcador al punto seleccionado
+  marker.setLatLng([e.latlng.lat, e.latlng.lng]) // el marcador usa la coordenada completa
+        .bindPopup("Ubicación seleccionada")
+        .openPopup();
+});
+
+</script>
 </body>
 </html>
