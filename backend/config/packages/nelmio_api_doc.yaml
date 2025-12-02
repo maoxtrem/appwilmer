@@ -22,6 +22,8 @@ nelmio_api_doc:
         - ^/api/user$          # POST /api/user (crear)
         - ^/api/user/[0-9]+$   # GET /api/user/{id}
         - ^/api/doc            # Documentación pública
+        - ^/api/cliente$       
+        - ^/api/cliente/[0-9]+$ 
       documentation:
         security: []           # sin token
 
