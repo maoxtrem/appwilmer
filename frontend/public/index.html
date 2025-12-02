@@ -1,0 +1,93 @@
+<!DOCTYPE html>
+<html lang="es">
+
+<head>
+  <meta charset="utf-8" />
+  <title>Mapa y Formulario con Ubicación</title>
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <!--#include virtual="/public/includes/css.html" -->
+  <link rel="stylesheet" href="./public/css/index.css">
+</head>
+
+<body class="bg-light">
+
+  <div class="container py-5">
+    <div class="row justify-content-center">
+      <!-- Tarjeta del mapa -->
+      <div class="col-md-6">
+        <div class="card shadow">
+          <div class="card-header text-center">
+            Mapa de Piedecuesta
+          </div>
+          <div class="card-body">
+            <div id="map"></div>
+          </div>
+        </div>
+      </div>
+
+      <!-- Tarjeta del formulario -->
+      <div class="col-md-6 mt-4 mt-md-0">
+        <div class="card shadow">
+          <div class="card-header text-center">
+            Formulario
+          </div>
+          <div class="card-body">
+            <form id="form_cliente">
+              <div class="mb-3">
+                <label for="nombre" class="form-label">Nombre</label>
+                <input type="text" class="form-control" id="nombre" name="nombre" placeholder="Ingresa tu nombre">
+              </div>
+
+              <div class="mb-3">
+                <label for="ip" class="form-label">IP</label>
+                <input type="text" class="form-control" id="ip" name="ip" placeholder="Ingresa la IP">
+              </div>
+
+              <div class="mb-3">
+                <label for="observacion" class="form-label">Observación</label>
+                <textarea class="form-control" id="observacion" name="observacion"></textarea>
+              </div>
+
+              <div class="mb-3">
+                <label for="estado" class="form-label">Estado</label>
+                <select class="form-select" id="estado" name="estado">
+                  <option value="">-- Selecciona estado --</option>
+                  <option value="Activo">Activo</option>
+                  <option value="Inactivo">Inactivo</option>
+                  <option value="Pendiente">Pendiente</option>
+                </select>
+              </div>
+
+
+              <!-- Campos de coordenadas -->
+              <div class="mb-3">
+                <label class="form-label">Ubicación</label>
+                <div class="input-group">
+                  <input type="text" class="form-control" id="latitud" name="latitud" readonly placeholder="Latitud">
+                  <input type="text" class="form-control" id="longitud" name="longitud" readonly placeholder="Longitud">
+                  <button type="button" class="btn btn-outline-primary" onclick="getLocation()">📍 Mi ubicación</button>
+                </div>
+              </div>
+
+              <div class="mb-3">
+                <label for="fechaInstalacion" class="form-label">Fecha de instalación</label>
+                <input type="datetime-local" class="form-control" id="fechaInstalacion" name="fechaInstalacion">
+              </div>
+
+              <button type="submit" class="btn btn-primary w-100">Enviar</button>
+            </form>
+
+
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!--#include virtual="/public/includes/js.html" -->
+
+  <script src="./public/js/index.js"></script>
+
+</body>
+
+</html>

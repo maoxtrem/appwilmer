@@ -5,4 +5,4 @@ services:
       context: .
       dockerfile: Dockerfile.frontend
     volumes:
-      - ./frontend/dist:/usr/share/nginx/html:rw    
+      - ./frontend:/usr/share/nginx/html:rw    

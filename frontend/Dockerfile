@@ -9,7 +9,7 @@ RUN rm /etc/nginx/conf.d/default.conf \
     && chown -R nginx:nginx /tmp/nginx
 
 # Copia tu configuración personalizada
-COPY ./frontend/nginx-frontend.conf /etc/nginx/conf.d
-COPY ./frontend/dist /usr/share/nginx/html
+COPY nginx-frontend.conf /etc/nginx/conf.d
+COPY ./frontend /usr/share/nginx/html
 
 CMD ["nginx", "-g", "daemon off;"]

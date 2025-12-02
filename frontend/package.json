@@ -1,0 +1,8 @@
+{
+  "name": "frontend-cliente",
+  "version": "1.0.0",
+  "description": "Frontend estático con HTML, CSS y JS, gestionando librerías vía npm",
+  "dependencies": {
+    "leaflet": "^1.9.4"
+  }
+}
