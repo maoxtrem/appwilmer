@@ -1,9 +1,33 @@
 nelmio_api_doc:
-    documentation:
-        info:
-            title: My App
-            description: This is an awesome app!
-            version: 1.0.0
-    areas: # to filter documented areas
-        path_patterns:
-            - ^/api(?!/doc$) # Accepts routes under /api except /api/doc
+  documentation:
+    info:
+      title: My App
+      description: This is an awesome app!
+      version: 1.0.0
+
+    components:
+      securitySchemes:
+        Bearer:
+          type: http
+          scheme: bearer
+          bearerFormat: JWT
+
+  areas:
+    default:
+      path_patterns:
+        - ^/api(?!/doc$)   # Documenta /api excepto /api/doc
+
+    public:
+      path_patterns:
+        - ^/api/user$          # POST /api/user (crear)
+        - ^/api/user/[0-9]+$   # GET /api/user/{id}
+        - ^/api/doc            # Documentación pública
+      documentation:
+        security: []           # sin token
+
+    protected:
+      path_patterns:
+        - ^/api/user/[0-9]+$   # PUT y DELETE /api/user/{id}
+      documentation:
+        security:
+          - Bearer: []         # requiere token

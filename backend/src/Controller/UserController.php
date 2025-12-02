@@ -4,6 +4,8 @@ namespace App\Controller;
 
 use App\Entity\User;
 use App\Repository\UserRepository;
+use Nelmio\ApiDocBundle\Attribute\Model;
+use OpenApi\Attributes as OA;
 use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
 use Symfony\Component\HttpFoundation\JsonResponse;
 use Symfony\Component\HttpFoundation\Request;
@@ -13,6 +15,7 @@ use Symfony\Component\Routing\Annotation\Route;
 use Symfony\Component\Serializer\SerializerInterface;
 
 #[Route('/api/user',name: 'app_user_')]
+#[OA\Tag(name: 'User')]
 final class UserController extends AbstractController
 {
     public function __construct(
@@ -23,6 +26,15 @@ final class UserController extends AbstractController
 
     // 📌 Listar todos los usuarios
     #[Route(name: 'list', methods: ['GET'])]
+    #[OA\Response(
+        response: 200,
+        description: 'Returns the list of users',
+        content: new OA\JsonContent(
+            type: 'array',
+            items: new OA\Items(ref: new Model(type: User::class, groups: ['user:read']))
+        )
+    )]
+ 
     public function index(): JsonResponse
     {
         $users = $this->userRepository->findAll();
@@ -32,6 +44,21 @@ final class UserController extends AbstractController
 
     // 📌 Mostrar un usuario por ID
     #[Route('/{id}', name: 'show', methods: ['GET'])]
+    #[OA\Response(
+        response: 200,
+        description: 'Returns a user',
+        content: new Model(type: User::class, groups: ['user:read'])
+    )]
+    #[OA\Response(
+        response: 404,
+        description: 'User not found'
+    )]
+    #[OA\Parameter(
+        name: 'id',
+        in: 'path',
+        description: 'The id of the user',
+        schema: new OA\Schema(type: 'integer')
+    )]
     public function show(User $user): JsonResponse
     {
         $data = $this->serializer->serialize($user, 'json', ['groups' => 'user:read']);
@@ -40,9 +67,19 @@ final class UserController extends AbstractController
 
     // 📌 Crear un nuevo usuario
     #[Route('', name: 'create', methods: ['POST'])]
+    #[OA\Response(
+        response: 201,
+        description: 'User created',
+        content: new Model(type: User::class, groups: ['user:read'])
+    )]
+    #[OA\RequestBody(
+        description: 'User object that needs to be added',
+        required: true,
+        content: new Model(type: User::class, groups: ['user:write'])
+    )]
     public function create(Request $request): JsonResponse
     {
-        $user = $this->serializer->deserialize($request->getContent(), User::class, 'json');
+        $user = $this->serializer->deserialize($request->getContent(), User::class, 'json', ['groups' => 'user:write']);
         // Hash del password antes de guardar
         if (!empty($user->getPassword())) {
             $user->setPassword($this->passwordHasher->hashPassword($user, $user->getPassword()));
@@ -54,6 +91,27 @@ final class UserController extends AbstractController
 
     // 📌 Actualizar un usuario existente
     #[Route('/{id}', name: 'update', methods: ['PUT'])]
+    #[OA\Response(
+        response: 200,
+        description: 'User updated',
+        content: new Model(type: User::class, groups: ['user:read'])
+    )]
+    #[OA\Response(
+        response: 404,
+        description: 'User not found'
+    )]
+    #[OA\Parameter(
+        name: 'id',
+        in: 'path',
+        description: 'The id of the user',
+        schema: new OA\Schema(type: 'integer')
+    )]
+    #[OA\RequestBody(
+        description: 'User object that needs to be updated',
+        required: true,
+        content: new Model(type: User::class, groups: ['user:write'])
+    )]
+
     public function update(Request $request, User $user): JsonResponse
     {
         $data = json_decode($request->getContent(), true);
@@ -61,6 +119,7 @@ final class UserController extends AbstractController
         // Deserializar sobre el objeto existente
         $this->serializer->deserialize($request->getContent(), User::class, 'json', [
             'object_to_populate' => $user,
+            'groups' => 'user:write'
         ]);
 
         // Si viene password en el body, lo hashéo
@@ -75,6 +134,20 @@ final class UserController extends AbstractController
 
     // 📌 Eliminar un usuario
     #[Route('/{id}', name: 'delete', methods: ['DELETE'])]
+    #[OA\Response(
+        response: 204,
+        description: 'User deleted'
+    )]
+    #[OA\Response(
+        response: 404,
+        description: 'User not found'
+    )]
+    #[OA\Parameter(
+        name: 'id',
+        in: 'path',
+        description: 'The id of the user',
+        schema: new OA\Schema(type: 'integer')
+    )]
     public function delete(User $user): JsonResponse
     {
         $this->userRepository->remove($user);
