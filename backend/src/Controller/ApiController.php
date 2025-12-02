@@ -13,7 +13,7 @@ use App\Repository\UserRepository;
 final class ApiController extends AbstractController
 {
 
-    #[Route(name: 'api')]
+    #[Route(name: 'api', methods: ['GET'])]
     public function index(Request $request): JsonResponse
     {
         return new JsonResponse(['status' => 'ok']);

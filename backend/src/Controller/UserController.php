@@ -12,7 +12,7 @@ use Symfony\Component\PasswordHasher\Hasher\UserPasswordHasherInterface;
 use Symfony\Component\Routing\Annotation\Route;
 use Symfony\Component\Serializer\SerializerInterface;
 
-#[Route('/api/user')]
+#[Route('/api/user',name: 'app_user_')]
 final class UserController extends AbstractController
 {
     public function __construct(
@@ -22,7 +22,7 @@ final class UserController extends AbstractController
     ) {}
 
     // 📌 Listar todos los usuarios
-    #[Route('', name: 'app_user_list', methods: ['GET'])]
+    #[Route(name: 'list', methods: ['GET'])]
     public function index(): JsonResponse
     {
         $users = $this->userRepository->findAll();
@@ -31,7 +31,7 @@ final class UserController extends AbstractController
     }
 
     // 📌 Mostrar un usuario por ID
-    #[Route('/{id}', name: 'app_user_show', methods: ['GET'])]
+    #[Route('/{id}', name: 'show', methods: ['GET'])]
     public function show(User $user): JsonResponse
     {
         $data = $this->serializer->serialize($user, 'json', ['groups' => 'user:read']);
@@ -39,24 +39,21 @@ final class UserController extends AbstractController
     }
 
     // 📌 Crear un nuevo usuario
-    #[Route('', name: 'app_user_create', methods: ['POST'])]
+    #[Route('', name: 'create', methods: ['POST'])]
     public function create(Request $request): JsonResponse
     {
         $user = $this->serializer->deserialize($request->getContent(), User::class, 'json');
-
         // Hash del password antes de guardar
         if (!empty($user->getPassword())) {
             $user->setPassword($this->passwordHasher->hashPassword($user, $user->getPassword()));
         }
-
         $this->userRepository->save($user);
-
         $data = $this->serializer->serialize($user, 'json', ['groups' => 'user:read']);
         return new JsonResponse($data, Response::HTTP_CREATED, [], true);
     }
 
     // 📌 Actualizar un usuario existente
-    #[Route('/{id}', name: 'app_user_update', methods: ['PUT'])]
+    #[Route('/{id}', name: 'update', methods: ['PUT'])]
     public function update(Request $request, User $user): JsonResponse
     {
         $data = json_decode($request->getContent(), true);
@@ -77,7 +74,7 @@ final class UserController extends AbstractController
     }
 
     // 📌 Eliminar un usuario
-    #[Route('/{id}', name: 'app_user_delete', methods: ['DELETE'])]
+    #[Route('/{id}', name: 'delete', methods: ['DELETE'])]
     public function delete(User $user): JsonResponse
     {
         $this->userRepository->remove($user);
